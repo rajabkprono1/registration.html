@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Authentication</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --accent-color: #4fc3f7;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+        }
+        
+        .form-container {
+            flex: 1;
+            padding: 40px;
+            transition: all 0.6s ease-in-out;
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .form-header h2 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .toggle-form {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .toggle-form a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .toggle-form a:hover {
+            text-decoration: underline;
+        }
+        
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+        
+        .error {
+            background-color: #fdecea;
+            color: var(--error-color);
+            display: block;
+        }
+        
+        .success {
+            background-color: #e8f5e9;
+            color: var(--success-color);
+            display: block;
+        }
+        
+        .info {
+            background-color: #e3f2fd;
+            color: var(--secondary-color);
+            display: block;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .role-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .role-option {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .role-option input[type="radio"] {
+            display: none;
+        }
+        
+        .role-option label {
+            display: block;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .role-option input[type="radio"]:checked + label {
+            border-color: var(--primary-color);
+            background-color: rgba(74, 111, 165, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .form-container {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Registration Form -->
+        <div class="form-container" id="registerForm">
+            <div class="form-header">
+                <h2>Create Account</h2>
+                <p>Join our community today</p>
+            </div>
+            
+            <div id="registerMessage" class="message"></div>
+            
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label for="regUsername">Username</label>
+                    <input type="text" id="regUsername" name="username" required minlength="3" maxlength="30">
+                </div>
+                
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" name="password" required minlength="8">
+                </div>
+                
+                <div class="role-selector">
+                    <div class="role-option">
+                        <input type="radio" id="userRole" name="role" value="user" checked>
+                        <label for="userRole">Regular User</label>
+                    </div>
+                    <div class="role-option">
+                        <input type="radio" id="writerRole" name="role" value="writer">
+                        <label for="writerRole">Content Writer</label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn">Register</button>
+            </form>
+            
+            <div class="toggle-form">
+                Already have an account? <a id="showLogin">Sign In</a>
+            </div>
+        </div>
+        
+        <!-- Login Form -->
+        <div class="form-container hidden" id="loginForm">
+            <div class="form-header">
+                <h2>Welcome Back</h2>
+                <p>Sign in to your account</p>
+            </div>
+            
+            <div id="loginMessage" class="message"></div>
+            
+            <form id="loginFormElement">
+                <div class="form-group">
+                    <label for="loginEmailOrUsername">Email or Username</label>
+                    <input type="text" id="loginEmailOrUsername" name="emailOrUsername" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn">Login</button>
+            </form>
+            
+            <div class="toggle-form">
+                Don't have an account? <a id="showRegister">Register</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const registerForm = document.getElementById('registerForm');
+        const loginForm = document.getElementById('loginForm');
+        const showLogin = document.getElementById('showLogin');
+        const showRegister = document.getElementById('showRegister');
+        const registrationForm = document.getElementById('registrationForm');
+        const loginFormElement = document.getElementById('loginFormElement');
+        const registerMessage = document.getElementById('registerMessage');
+        const loginMessage = document.getElementById('loginMessage');
+        
+        // Toggle between forms
+        showLogin.addEventListener('click', () => {
+            registerForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            loginMessage.textContent = '';
+            loginMessage.className = 'message';
+        });
+        
+        showRegister.addEventListener('click', () => {
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+            registerMessage.textContent = '';
+            registerMessage.className = 'message';
+        });
+        
+        // Handle registration
+        registrationForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                username: document.getElementById('regUsername').value,
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPassword').value,
+                role: document.querySelector('input[name="role"]:checked').value
+            };
+            
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage(registerMessage, 'success', data.message);
+                    registrationForm.reset();
+                } else {
+                    showMessage(registerMessage, 'error', data.message);
+                    
+                    // Handle unverified existing user case
+                    if (data.action === 'resend_verification') {
+                        const resendBtn = document.createElement('button');
+                        resendBtn.textContent = 'Resend Verification Email';
+                        resendBtn.style.marginTop = '10px';
+                        resendBtn.className = 'btn';
+                        resendBtn.onclick = async () => {
+                            try {
+                                const resendResponse = await fetch(`/api/auth/resend-verification/${data.userId}`, {
+                                    method: 'POST'
+                                });
+                                const resendData = await resendResponse.json();
+                                showMessage(registerMessage, resendResponse.ok ? 'success' : 'error', resendData.message);
+                            } catch (err) {
+                                showMessage(registerMessage, 'error', 'Failed to resend verification email');
+                            }
+                        };
+                        registerMessage.appendChild(resendBtn);
+                    }
+                }
+            } catch (error) {
+                showMessage(registerMessage, 'error', 'Registration failed. Please try again.');
+                console.error('Registration error:', error);
+            }
+        });
+        
+        // Handle login
+        loginFormElement.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                emailOrUsername: document.getElementById('loginEmailOrUsername').value,
+                password: document.getElementById('loginPassword').value
+            };
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage(loginMessage, 'success', 'Login successful! Redirecting...');
+                    // Store token and user data
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    // Redirect to dashboard or home page
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1500);
+                } else {
+                    let message = data.message;
+                    if (data.action === 'verify_email') {
+                        message += ' Click here to resend verification email.';
+                        const resendBtn = document.createElement('button');
+                        resendBtn.textContent = 'Resend Verification';
+                        resendBtn.style.marginTop = '10px';
+                        resendBtn.className = 'btn';
+                        resendBtn.onclick = async () => {
+                            try {
+                                const resendResponse = await fetch('/api/auth/resend-verification', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ email: data.email })
+                                });
+                                const resendData = await resendResponse.json();
+                                showMessage(loginMessage, resendResponse.ok ? 'success' : 'error', resendData.message);
+                            } catch (err) {
+                                showMessage(loginMessage, 'error', 'Failed to resend verification email');
+                            }
+                        };
+                        loginMessage.innerHTML = message;
+                        loginMessage.appendChild(resendBtn);
+                    } else {
+                        showMessage(loginMessage, 'error', message);
+                    }
+                }
+            } catch (error) {
+                showMessage(loginMessage, 'error', 'Login failed. Please try again.');
+                console.error('Login error:', error);
+            }
+        });
+        
+        // Helper function to show messages
+        function showMessage(element, type, message) {
+            element.textContent = message;
+            element.className = `message ${type}`;
+        }
+        
+        // Check for URL parameters (for email verification redirects)
+        const urlParams = new URLSearchParams(window.location.search);
+        const verificationStatus = urlParams.get('verification');
+        
+        if (verificationStatus === 'success') {
+            showMessage(loginMessage, 'success', 'Email verified successfully! Please login.');
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+        } else if (verificationStatus === 'error') {
+            showMessage(registerMessage, 'error', 'Email verification failed. Please try again or register.');
+            registerForm.classList.remove('hidden');
+            loginForm.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
